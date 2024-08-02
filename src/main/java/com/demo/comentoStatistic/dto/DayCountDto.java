@@ -1,15 +1,15 @@
 package com.demo.comentoStatistic.dto;
 
-public class YearCountDto {
-    private String year;
+public class DayCountDto {
+    private String date;
     private int totCnt;
 
-    public String getYear() {
-        return year;
+    public String getDate() {
+        return date;
     }
 
-    public void setYear(String year) {
-        this.year = year;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getTotCnt() {

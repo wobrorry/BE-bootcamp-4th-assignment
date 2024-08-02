@@ -5,17 +5,34 @@
 
 <mapper namespace="com.demo.comentoStatistic.dao.StatisticMapper">
 
-    <select id="selectYearLogin" parameterType="string" resultType="YearCountDto">
-        select concat('20', #{year}) as year, count(*) as totCnt
+    <!-- Existing queries... -->
+
+    <select id="selectDayLogin" parameterType="map" resultType="DayCountDto">
+        select count(*) as totCnt
         from statistic.requestInfo ri
-        where left(ri.createDate, 2) = #{year};
+        where left(ri.createDate, 6) = #{yearMonth} and right(ri.createDate, 2) = #{date};
     </select>
 
+    <select id="selectMonthlyAverageLogin" parameterType="string" resultType="double">
+        select avg(cnt) as averageLoginCount
+        from (
+                 select count(*) as cnt
+                 from statistic.requestInfo ri
+                 where left(ri.createDate, 6) = #{yearMonth}
+                 group by right(ri.createDate, 2)
+             ) as dailyCounts;
+    </select>
 
-    <select id="selectYearMonthLogin" parameterType="string" resultType="YearMonthCountDto">
-        select concat('20', #{yearMonth}) as yearMonth, count(*) as totCnt
+    <select id="selectMonthlyLoginWithoutHolidays" parameterType="string" resultType="int">
+        select count(*) as totCnt
         from statistic.requestInfo ri
-        where left(ri.createDate, 4) = #{yearMonth};
+        where left(ri.createDate, 6) = #{yearMonth} and ri.createDate not in (select holidayDate from holidays);
+    </select>
+
+    <select id="selectMonthlyLoginByOrganization" parameterType="map" resultType="OrganizationCountDto">
+        select count(*) as totCnt
+        from statistic.requestInfo ri
+        where left(ri.createDate, 6) = #{yearMonth} and ri.organization = #{organization};
     </select>
 
 </mapper>
